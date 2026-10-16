@@ -36,11 +36,11 @@ and every part of the brief maps onto it:
 | 05 | **The Lesson** | 40–50 s | Result, then the rigour: outcome bias. |
 | 06 | **The Rule** | 50–60 s | The line to remember, and the end card. |
 
-Final times are derived from the measured narration (`build/timeline.json`). Each scene stretches to fit its lines.
+Final times are derived from the measured narration (`build/salad-oil/timeline.json`). Each scene stretches to fit its lines.
 
 ## 3. Script
 
-The `say` text is what the voice reads. Captions use the display text in `src/script.json`.
+The `say` text is what the voice reads. Captions use the display text in `films/salad-oil/script.json`.
 
 1. In 1963, the best investment of Warren Buffett's early career began… with a fraud made of salad oil.
 2. A New Jersey trader had borrowed millions against tanks of soybean oil that were mostly water.
@@ -103,13 +103,5 @@ Figures are kept conservative where sources disagree. On screen, prices are labe
 ## 7. Build pipeline
 
 ```
-src/script.json ──► src/tts.py ──► build/vo/*.wav + build/timeline.json (measured line timings, word timings)
-                          │
-                          ├──► src/audio.py ──► build/mix.wav (score + SFX + ducked VO, loudness-normalised)
-                          │
-web/index.html (canvas scene engine, deterministic renderFrame(t))
-        └──► src/render.mjs (Playwright → JPEG frames → ffmpeg) ──► build/video.mp4
-                                                                  └─► output/the-salad-oil-test.mp4 (mux)
+./build.sh salad-oil      # see the repository README for the shared engine
 ```
-
-Everything is deterministic and rebuildable with `./build.sh`.

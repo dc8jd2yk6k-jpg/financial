@@ -1,6 +1,9 @@
 """Narration: synthesise each script line with Kokoro, then measure the timings.
 
-Writes build/vo/<id>.wav (trimmed, 24 kHz mono) and build/timeline.json. The timeline holds
+Usage: python3 src/tts.py <film> [models_dir]
+
+Reads films/<film>/script.json. Writes build/<film>/vo/<id>.wav (trimmed, 24 kHz
+mono) and build/<film>/timeline.json. The timeline holds
 each line's start and end in the film, approximate per-word timings for the
 captions, and the scene and chapter spans. Word timings come from the silences
 inside each clip: the longest pauses are matched to punctuation breaks, and
@@ -16,17 +19,18 @@ import soundfile as sf
 from kokoro_onnx import Kokoro
 
 ROOT = Path(__file__).resolve().parent.parent
-MODELS = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build" / "models"
-BUILD = ROOT / "build"
+FILM = sys.argv[1] if len(sys.argv) > 1 else "ten-year-bet"
+MODELS = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "build" / "models"
+BUILD = ROOT / "build" / FILM
 VO = BUILD / "vo"
 SR = 24000
+SCRIPT = json.loads((ROOT / "films" / FILM / "script.json").read_text())
 
-FILM_LEN = 60.0
-LEAD_IN = 0.40          # silence before the first word
-GAP_LINE = 0.24         # between lines within a chapter
-GAP_CHAPTER = 0.55      # between chapters (room for a transition)
-END_CARD = 2.9          # hold after the last line
-SPEED = 1.13
+# Pacing. Each film's script.json can override any of these.
+P = {"duration": 60.0, "lead_in": 0.40, "gap_line": 0.24, "gap_chapter": 0.55,
+     "end_card": 2.9, "end_card_gap": 1.1, "speed": 1.13, **SCRIPT.get("pacing", {})}
+FILM_LEN, LEAD_IN, GAP_LINE, GAP_CHAPTER = P["duration"], P["lead_in"], P["gap_line"], P["gap_chapter"]
+END_CARD, SPEED = P["end_card"], P["speed"]
 
 
 def trim(x, thresh=0.012, pad=0.04):
@@ -118,7 +122,7 @@ def spread(words, a, b):
 
 
 def main():
-    script = json.loads((ROOT / "src" / "script.json").read_text())
+    script = SCRIPT
     VO.mkdir(parents=True, exist_ok=True)
     kokoro = Kokoro(str(MODELS / "kokoro-v1.0.onnx"), str(MODELS / "voices-v1.0.bin"))
 
@@ -168,7 +172,7 @@ def main():
             prev_end = next(l["end"] for l in lines_out if l["id"] == scenes[i - 1]["lines"][-1])
             sc["start"] = round((prev_end + sc["start"]) / 2, 3)
     scenes.append({"id": "endcard", "chapter": "rule", "lines": [],
-                   "start": round(voice_end + 1.1, 3)})
+                   "start": round(voice_end + P["end_card_gap"], 3)})
     for i, sc in enumerate(scenes):
         sc["end"] = scenes[i + 1]["start"] if i + 1 < len(scenes) else duration
 

@@ -1,6 +1,6 @@
 // Render web/index.html frame by frame in headless Chromium and pipe the JPEGs to ffmpeg.
-//   node src/render.mjs                    -> build/video.mp4 (silent; mux runs separately)
-//   node src/render.mjs --stills 1,6.2,15  -> build/stills/t_<sec>.jpg
+//   node src/render.mjs <film>                    -> build/<film>/video.mp4 (silent; mux runs separately)
+//   node src/render.mjs <film> --stills 1,6.2,15  -> build/<film>/stills/t_<sec>.jpg
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -32,14 +32,17 @@ const browser = await chromium.launch({ args: ['--disable-gpu-vsync', '--force-c
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
 page.on('console', m => { if (m.type() !== 'log') console.log('[page]', m.text()); });
 page.on('pageerror', e => { console.error('[page error]', e); process.exitCode = 1; });
-await page.goto(`http://127.0.0.1:${port}/web/index.html?headless`);
+const argv = process.argv.slice(2);
+const FILM = argv[0] && !argv[0].startsWith('--') ? argv.shift() : 'ten-year-bet';
+const OUT = join(ROOT, 'build', FILM);
+await page.goto(`http://127.0.0.1:${port}/web/index.html?headless&film=${FILM}`);
 await page.evaluate(() => window.ready);
 
 const decode = d => Buffer.from(d.slice(d.indexOf(',') + 1), 'base64');
-const args = process.argv.slice(2);
+const args = argv;
 
 if (args[0] === '--stills') {
-  const out = join(ROOT, 'build', 'stills'); mkdirSync(out, { recursive: true });
+  const out = join(OUT, 'stills'); mkdirSync(out, { recursive: true });
   for (const s of args[1].split(',')) {
     const t = parseFloat(s);
     const data = await page.evaluate(t => { renderFrame(Math.round(t * 30)); return grab(.9); }, t);
@@ -48,7 +51,7 @@ if (args[0] === '--stills') {
   console.log('stills ->', out);
 } else {
   const n = await page.evaluate(() => frameCount());
-  const outFile = join(ROOT, 'build', 'video.mp4');
+  const outFile = join(OUT, 'video.mp4');
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-',
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-tune', 'film',
     '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-movflags', '+faststart', outFile], { stdio: ['pipe', 'inherit', 'inherit'] });

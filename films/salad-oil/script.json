@@ -1,0 +1,124 @@
+{
+  "title": "The Salad Oil Test",
+  "slug": "the-salad-oil-test",
+  "poster": 5.9,
+  "voice": "af_heart",
+  "pacing": {
+    "duration": 60.0,
+    "lead_in": 0.4,
+    "gap_line": 0.24,
+    "gap_chapter": 0.55,
+    "end_card": 2.9,
+    "end_card_gap": 1.1,
+    "speed": 1.13
+  },
+  "chapters": [
+    {
+      "id": "panic",
+      "label": "THE PANIC"
+    },
+    {
+      "id": "question",
+      "label": "THE QUESTION"
+    },
+    {
+      "id": "test",
+      "label": "THE TEST"
+    },
+    {
+      "id": "bet",
+      "label": "THE BET"
+    },
+    {
+      "id": "lesson",
+      "label": "THE LESSON"
+    },
+    {
+      "id": "rule",
+      "label": "THE RULE"
+    }
+  ],
+  "lines": [
+    {
+      "id": "L01",
+      "chapter": "panic",
+      "scene": "hook",
+      "text": "In 1963, Warren Buffett's best early investment began... with a fraud made of salad oil.",
+      "say": "In nineteen sixty-three, Warren Buffett's best early investment began... with a fraud made of salad oil."
+    },
+    {
+      "id": "L02",
+      "chapter": "panic",
+      "scene": "tanks",
+      "text": "A New Jersey trader had borrowed millions against tanks of soybean oil that were mostly water."
+    },
+    {
+      "id": "L03",
+      "chapter": "panic",
+      "scene": "receipt",
+      "text": "An American Express subsidiary had vouched for the inventory."
+    },
+    {
+      "id": "L04",
+      "chapter": "panic",
+      "scene": "crash",
+      "text": "When the fraud surfaced, the stock nearly halved."
+    },
+    {
+      "id": "L05",
+      "chapter": "question",
+      "scene": "question",
+      "text": "Buffett didn't ask how bad the news was. He asked a sharper question:"
+    },
+    {
+      "id": "L06",
+      "chapter": "question",
+      "scene": "question",
+      "text": "Is the damage to the balance sheet, or to the franchise?"
+    },
+    {
+      "id": "L07",
+      "chapter": "test",
+      "scene": "field",
+      "text": "So he left his desk. He watched the register at Ross's Steak House in Omaha, and checked with banks."
+    },
+    {
+      "id": "L08",
+      "chapter": "test",
+      "scene": "field",
+      "text": "People still paid with the card. They still bought the travelers cheques.",
+      "say": "People still paid with the card. They still bought the travelers checks."
+    },
+    {
+      "id": "L09",
+      "chapter": "bet",
+      "scene": "scale",
+      "text": "The claims were large, but finite. The trust was intact, and compounding."
+    },
+    {
+      "id": "L10",
+      "chapter": "bet",
+      "scene": "sizing",
+      "text": "Over two years, he built the position to about 40% of his partnership.",
+      "say": "Over two years, he built the position to about forty percent of his partnership."
+    },
+    {
+      "id": "L11",
+      "chapter": "lesson",
+      "scene": "result",
+      "text": "Within three years, the shares had roughly doubled from their lows."
+    },
+    {
+      "id": "L12",
+      "chapter": "lesson",
+      "scene": "grid",
+      "text": "But don't learn the outcome. Learn the method. Good results can flatter bad reasoning."
+    },
+    {
+      "id": "L13",
+      "chapter": "rule",
+      "scene": "rule",
+      "text": "A falling price is a fact. A falling value is only a hypothesis. Go test it."
+    }
+  ]
+}
